@@ -17,7 +17,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-// DEV BYPASS — provide a fake admin profile so the full UI renders locally
+// Explicit demo-mode bypass — provide a fake admin profile when the app is
+// intentionally running as a non-authenticated demo.
 function DevAuthProvider({ children }: { children: ReactNode }) {
   const mockProfile = {
     id: 'dev-user',
@@ -42,9 +43,7 @@ function DevAuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // DEV BYPASS
-  // DEMO BYPASS — use mock auth for draft/demo site and local dev
-  if (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true') return <DevAuthProvider>{children}</DevAuthProvider>
+  if (import.meta.env.VITE_DEMO_MODE === 'true') return <DevAuthProvider>{children}</DevAuthProvider>
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [profile, setProfile] = useState<TeamMember | null>(null)
   const [session, setSession] = useState<Session | null>(null)
